@@ -6,7 +6,11 @@ export function useAuth() {
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/auth/user"],
     queryFn: async (): Promise<User> => {
-      const response = await fetch("/api/auth/user", {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+      const url = baseUrl
+        ? new URL("/api/auth/user", baseUrl).toString()
+        : "/api/auth/user";
+      const response = await fetch(url, {
         credentials: "include",
       });
 
