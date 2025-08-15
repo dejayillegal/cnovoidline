@@ -112,7 +112,7 @@ export class PresetManager {
 
   async loadPresets(): Promise<{ builtIn: Preset[]; user: Preset[]; public: Preset[] }> {
     try {
-      const response = await apiRequest("GET", "/api/presets");
+      const response = await apiRequest("GET", "/presets");
       const data = await response.json();
       
       // Merge built-in presets with server data
@@ -139,7 +139,7 @@ export class PresetManager {
   }
 
   async createPreset(presetData: Omit<InsertPreset, "userId">): Promise<Preset> {
-    const response = await apiRequest("POST", "/api/presets", presetData);
+    const response = await apiRequest("POST", "/presets", presetData);
     const preset = await response.json();
     
     this.presets.set(preset.id, preset);
@@ -147,7 +147,7 @@ export class PresetManager {
   }
 
   async updatePreset(id: string, updates: Partial<InsertPreset>): Promise<Preset> {
-    const response = await apiRequest("PATCH", `/api/presets/${id}`, updates);
+    const response = await apiRequest("PATCH", `/presets/${id}`, updates);
     const preset = await response.json();
     
     this.presets.set(preset.id, preset);
@@ -155,7 +155,7 @@ export class PresetManager {
   }
 
   async deletePreset(id: string): Promise<void> {
-    await apiRequest("DELETE", `/api/presets/${id}`);
+    await apiRequest("DELETE", `/presets/${id}`);
     this.presets.delete(id);
   }
 
@@ -168,7 +168,7 @@ export class PresetManager {
     // Record usage if not built-in
     if (!preset.isBuiltIn) {
       try {
-        await apiRequest("POST", `/api/presets/${id}/use`);
+        await apiRequest("POST", `/presets/${id}/use`);
       } catch (error) {
         console.warn("Failed to record preset usage:", error);
       }

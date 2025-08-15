@@ -16,7 +16,7 @@ export default defineConfig({
         ]
       : []),
   ],
-  base: "/cnovoidline/",
+  base: "/cnovoidline/", // GH Pages subpath
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -33,6 +33,10 @@ export default defineConfig({
     fs: {
       strict: true,
       deny: ["**/.*"],
+    },
+    proxy: {
+      // Optional: during local dev, forward /api to your backend
+      // '/api': 'http://localhost:8787'
     },
   },
 });

@@ -77,10 +77,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Fetch user preferences if authenticated
   const { data: preferences, isLoading } = useQuery<UserPreference | null>({
-    queryKey: ["/api/preferences"],
+    queryKey: ["/preferences"],
     queryFn: async (): Promise<UserPreference | null> => {
       if (!isAuthenticated) return null;
-      const res = await apiRequest("GET", "/api/preferences");
+      const res = await apiRequest("GET", "/preferences");
       return res.json();
     },
     enabled: isAuthenticated,
@@ -96,12 +96,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      await apiRequest("POST", "/api/preferences", {
+      await apiRequest("POST", "/preferences", {
         theme: newTheme,
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/preferences"] });
+      queryClient.invalidateQueries({ queryKey: ["/preferences"] });
     },
   });
 
