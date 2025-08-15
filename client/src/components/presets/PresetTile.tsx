@@ -135,7 +135,7 @@ export function PresetTile({
               {preset.category}
             </Badge>
           )}
-          {preset.usageCount > 0 && (
+          {(preset.usageCount ?? 0) > 0 && (
             <Badge variant="outline" className="text-xs">
               Used {preset.usageCount}x
             </Badge>

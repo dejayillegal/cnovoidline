@@ -77,7 +77,7 @@ export default function Console() {
   }, [isAuthenticated, toast]);
 
   // Fetch presets
-  const { data: presetsData, isLoading: presetsLoading } = useQuery({
+  const { data: presetsData, isLoading: presetsLoading } = useQuery<{ builtIn: Preset[]; user: Preset[]; public: Preset[] }>({
     queryKey: ["/api/presets"],
     retry: false,
   });
@@ -542,12 +542,12 @@ export default function Console() {
                   <p className="text-text-secondary">AI-crafted presets for every sonic environment</p>
                 </div>
                 
-                {!presetsLoading && presetsData && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {presetsData.builtIn?.slice(0, 3).map((preset: Preset) => (
-                      <PresetTile
-                        key={preset.id}
-                        preset={preset}
+                  {!presetsLoading && !!presetsData && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {presetsData.builtIn?.slice(0, 3).map((preset: Preset) => (
+                        <PresetTile
+                          key={preset.id}
+                          preset={preset}
                         onApply={handleApplyPreset}
                       />
                     ))}
