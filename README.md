@@ -67,5 +67,15 @@ A professional-grade AI audio mastering console with a terminal aesthetic, featu
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd voidline-console
+ git clone <repository-url>
+ cd voidline-console
+```
+
+### GitHub Pages
+
+The frontend is deployed at <https://dejayillegal.github.io/cnovoidline/>.
+
+Without a backend, all `/api/*` requests resolve to static JSON files under the repo's base path, allowing the demo to run on GitHub Pages.
+
+To connect to a real backend, set `VITE_API_URL` to your API base URL (for example, `https://your-api.example.com`). During build or runtime, calls will be sent to this backend instead of the static files. Ensure the backend enables CORS for `https://dejayillegal.github.io` and allows credentials.
+

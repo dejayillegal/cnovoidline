@@ -6,6 +6,7 @@ import { GlitchWord } from "@/components/effects/GlitchWord";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAuth } from "@/hooks/useAuth";
 import { WaveDNA } from "@/components/visualizers/WaveDNA";
+import { apiUrl } from "@/lib/api";
 
 export default function Landing() {
   const [selectedTheme, setSelectedTheme] = useState<"classic" | "matrix" | "cyberpunk" | "retro">("classic");
@@ -19,7 +20,7 @@ export default function Landing() {
   };
 
   const handleLogin = () => {
-    window.location.href = "/api/login";
+    window.location.href = apiUrl("/login");
   };
 
   const handleStartMastering = () => {

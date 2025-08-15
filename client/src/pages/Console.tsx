@@ -18,6 +18,7 @@ import { GlitchWord } from "@/components/effects/GlitchWord";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
+import { apiUrl } from "@/lib/api";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { useAudioStore } from "@/lib/stores/audioStore";
 import { usePresetStore } from "@/lib/stores/presetStore";
@@ -70,7 +71,7 @@ export default function Console() {
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
+        window.location.href = apiUrl("/login");
       }, 500);
       return;
     }
@@ -78,25 +79,25 @@ export default function Console() {
 
   // Fetch presets
   const { data: presetsData, isLoading: presetsLoading } = useQuery<{ builtIn: Preset[]; user: Preset[]; public: Preset[] }>({
-    queryKey: ["/api/presets"],
+    queryKey: ["/presets"],
     retry: false,
   });
 
   // Fetch user projects
   const { data: projects } = useQuery({
-    queryKey: ["/api/projects"],
+    queryKey: ["/projects"],
     retry: false,
   });
 
   // Create project mutation
   const createProjectMutation = useMutation({
     mutationFn: async (projectData: any) => {
-      const response = await apiRequest("POST", "/api/projects", projectData);
+      const response = await apiRequest("POST", "/projects", projectData);
       return response.json();
     },
     onSuccess: (project) => {
       setCurrentProject(project.id);
-      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      queryClient.invalidateQueries({ queryKey: ["/projects"] });
       toast({
         title: "Project Created",
         description: `Created project: ${project.name}`,
@@ -110,7 +111,7 @@ export default function Console() {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.location.href = apiUrl("/login");
         }, 500);
         return;
       }
@@ -125,11 +126,11 @@ export default function Console() {
   // Update project mutation
   const updateProjectMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: any }) => {
-      const response = await apiRequest("PATCH", `/api/projects/${id}`, updates);
+      const response = await apiRequest("PATCH", `/projects/${id}`, updates);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      queryClient.invalidateQueries({ queryKey: ["/projects"] });
     },
     onError: (error) => {
       if (isUnauthorizedError(error)) {
@@ -139,7 +140,7 @@ export default function Console() {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.location.href = apiUrl("/login");
         }, 500);
         return;
       }
@@ -149,7 +150,7 @@ export default function Console() {
   // Analyze audio mutation
   const analyzeAudioMutation = useMutation({
     mutationFn: async (audioData: string) => {
-      const response = await apiRequest("POST", "/api/dsp/analyze", { audioData });
+      const response = await apiRequest("POST", "/dsp/analyze", { audioData });
       return response.json();
     },
     onSuccess: (analysis: AnalysisResults) => {
@@ -169,7 +170,7 @@ export default function Console() {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.location.href = apiUrl("/login");
         }, 500);
         return;
       }
@@ -198,7 +199,7 @@ export default function Console() {
         });
       }, 200);
 
-      const response = await apiRequest("POST", "/api/dsp/render", {
+      const response = await apiRequest("POST", "/dsp/render", {
         audioData: "mock_audio_data", // In real app, would be actual audio data
         parameters: processingParams,
         exportFormat: format,
@@ -230,7 +231,7 @@ export default function Console() {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.location.href = apiUrl("/login");
         }, 500);
         return;
       }
@@ -358,7 +359,7 @@ export default function Console() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => window.location.href = "/api/logout"}
+                onClick={() => window.location.href = apiUrl("/logout")}
                 className="font-mono text-sm"
                 data-testid="button-logout"
               >
