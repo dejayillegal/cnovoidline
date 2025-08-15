@@ -45,7 +45,7 @@ interface PresetState {
 }
 
 export const usePresetStore = create<PresetState>()(
-  subscribeWithSelector((set, get) => ({
+  subscribeWithSelector<PresetState>((set, get) => ({
     // Initial state
     presetManager: new PresetManager(),
     builtInPresets: [],

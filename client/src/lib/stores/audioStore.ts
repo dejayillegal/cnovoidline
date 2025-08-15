@@ -76,7 +76,7 @@ const defaultProcessingParams: PresetParameters = {
 };
 
 export const useAudioStore = create<AudioState>()(
-  subscribeWithSelector((set, get) => ({
+  subscribeWithSelector<AudioState>((set, get) => ({
     // Initial state
     audioEngine: null,
     isPlaying: false,

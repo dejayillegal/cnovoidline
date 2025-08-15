@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
+import type { UserPreference } from "@shared/schema";
 
 type ThemeType = "classic" | "matrix" | "cyberpunk" | "retro";
 
@@ -58,6 +59,7 @@ interface ThemeContextType {
   theme: ThemeType;
   setTheme: (theme: ThemeType) => void;
   config: ThemeConfig;
+  isLoading: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -74,11 +76,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
 
   // Fetch user preferences if authenticated
-  const { data: preferences, isLoading } = useQuery({
+  const { data: preferences, isLoading } = useQuery<UserPreference | null>({
     queryKey: ["/api/preferences"],
-    queryFn: async () => {
+    queryFn: async (): Promise<UserPreference | null> => {
       if (!isAuthenticated) return null;
-      return await apiRequest("GET", "/api/preferences");
+      const res = await apiRequest("GET", "/api/preferences");
+      return res.json();
     },
     enabled: isAuthenticated,
     retry: false,

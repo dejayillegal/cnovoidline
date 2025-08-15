@@ -1,5 +1,5 @@
 
-import { create } from 'zustand';
+import { create, type StateCreator } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type ThemeType = "classic" | "matrix" | "cyberpunk" | "retro";
@@ -63,66 +63,65 @@ interface ThemeState {
   getThemeColors: () => ThemeConfig;
 }
 
-export const useThemeStore = create<ThemeState>()(
-  persist(
-    (set, get) => ({
-      theme: "classic",
-      customThemes: {},
-      
-      setTheme: (theme: ThemeType) => {
-        set({ theme });
-        
-        // Apply theme to CSS variables
-        if (typeof window !== "undefined") {
-          const root = document.documentElement;
-          const config = themeConfigs[theme];
-          
-          root.style.setProperty("--theme-primary", config.primary);
-          root.style.setProperty("--theme-secondary", config.secondary);
-          root.style.setProperty("--theme-accent", config.accent);
-          root.style.setProperty("--theme-background", config.background);
-          root.style.setProperty("--theme-foreground", config.foreground);
-          root.style.setProperty("--theme-glow", config.glow);
-          root.style.setProperty("--theme-glow-strong", config.glowStrong);
-        }
-      },
+const themeStoreCreator: StateCreator<ThemeState> = (set, get) => ({
+  theme: "classic",
+  customThemes: {},
 
-      toggleTheme: () => {
-        const themes: ThemeType[] = ["classic", "matrix", "cyberpunk", "retro"];
-        const currentIndex = themes.indexOf(get().theme);
-        const nextIndex = (currentIndex + 1) % themes.length;
-        get().setTheme(themes[nextIndex]);
-      },
+  setTheme: (theme: ThemeType) => {
+    set({ theme });
 
-      addCustomTheme: (name: string, config: ThemeConfig) => {
-        set(state => ({
-          customThemes: {
-            ...state.customThemes,
-            [name]: config,
-          },
-        }));
-      },
+    // Apply theme to CSS variables
+    if (typeof window !== "undefined") {
+      const root = document.documentElement;
+      const config = themeConfigs[theme];
 
-      removeCustomTheme: (name: string) => {
-        set(state => {
-          const { [name]: removed, ...rest } = state.customThemes;
-          return { customThemes: rest };
-        });
-      },
-
-      getThemeColors: () => {
-        const { theme } = get();
-        return themeConfigs[theme];
-      },
-    }),
-    {
-      name: "voidline-theme-store",
-      partialize: (state) => ({
-        theme: state.theme,
-        customThemes: state.customThemes,
-      }),
+      root.style.setProperty("--theme-primary", config.primary);
+      root.style.setProperty("--theme-secondary", config.secondary);
+      root.style.setProperty("--theme-accent", config.accent);
+      root.style.setProperty("--theme-background", config.background);
+      root.style.setProperty("--theme-foreground", config.foreground);
+      root.style.setProperty("--theme-glow", config.glow);
+      root.style.setProperty("--theme-glow-strong", config.glowStrong);
     }
-  )
+  },
+
+  toggleTheme: () => {
+    const themes: ThemeType[] = ["classic", "matrix", "cyberpunk", "retro"];
+    const currentIndex = themes.indexOf(get().theme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    get().setTheme(themes[nextIndex]);
+  },
+
+  addCustomTheme: (name: string, config: ThemeConfig) => {
+    set(state => ({
+      customThemes: {
+        ...state.customThemes,
+        [name]: config,
+      },
+    }));
+  },
+
+  removeCustomTheme: (name: string) => {
+    set(state => {
+      const { [name]: _removed, ...rest } = state.customThemes;
+      return { customThemes: rest };
+    });
+  },
+
+  getThemeColors: () => {
+    const { theme } = get();
+    return themeConfigs[theme];
+  },
+});
+
+export const useThemeStore = create<ThemeState>()(
+  persist(themeStoreCreator, {
+    name: "voidline-theme-store",
+    partialize: (state) => ({
+      theme: state.theme,
+      customThemes: state.customThemes,
+    }),
+  })
 );
 
 // Apply initial theme on load
